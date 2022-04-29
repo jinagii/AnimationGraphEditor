@@ -1,0 +1,99 @@
+.droparea {
+
+    position: absolute;
+
+    top: 20px;
+
+    left: 20px;
+
+    bottom: 20px;
+
+    right: 20px;
+
+    background-color: azure;
+
+    border-width: 5px;
+
+    border-color: azure;
+
+}
+
+
+
+Label {
+
+    color: darkslategray;
+
+    -unity-text-align: upper-center;
+
+}
+
+
+
+.droparea.dragover {
+
+    border-width: 5px;
+
+    border-color: red;
+
+}
+
+
+
+.ghost {
+
+    -unity-text-align: upper-left;
+
+    display: none;
+
+    position: absolute;
+
+    width: 64px;
+
+    height: 64px;
+
+    background-color: rgba(100, 149, 237, 0.6);
+
+    color: #393636;
+
+    white-space: normal;
+
+}
+
+
+
+.ghost.visible {
+
+    display: flex;
+
+}
+
+
+
+.box {
+
+    position: absolute;
+
+    width: 64px;
+
+    height: 64px;
+
+    background-color: darkblue;
+
+    color: antiquewhite;
+
+    white-space: normal;
+
+    border-width: 1px;
+
+    border-color: orange;
+
+}
+
+
+
+.box.dragged {
+
+    background-color: rgba(0, 0, 139, .6);
+
+}

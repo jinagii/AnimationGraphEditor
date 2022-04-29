@@ -1,0 +1,1 @@
+cl.exe /utf-8 /D_USRDLL /D_WINDLL ../Plasma.c /MT /link /DLL /OUT:Plasma.dll

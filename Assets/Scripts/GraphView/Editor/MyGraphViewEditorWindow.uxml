@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="height: 30px; flex-direction: row;">
+        <ui:Button text="Load" display-tooltip-when-elided="true" name="Load" />
+        <ui:Button text="Save" display-tooltip-when-elided="true" name="Save" />
+        <ui:Button text="Save As" display-tooltip-when-elided="true" name="SaveAs" />
+    </ui:VisualElement>
+</ui:UXML>
