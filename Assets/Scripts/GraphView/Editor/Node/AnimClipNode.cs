@@ -1,6 +1,8 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Playables;
+using UnityEngine.Animations;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
@@ -9,10 +11,13 @@ public class AnimClipNode : BaseNode
 {
     public Label _animClipName = null;
     VisualElement m_DropArea;
-    
+
     AnimationClip _animClip = null;
+
+    AnimationClipPlayable _animClipPlayable;
+
     public AnimClipNode() : base()
-    { 
+    {
         title = "AnimClip";
 
         _animClipName = new Label("no filename");
@@ -29,7 +34,7 @@ public class AnimClipNode : BaseNode
 
         inputContainer.Clear();
 
-        for(int i = 0;i < outputContainer.childCount; ++i)
+        for (int i = 0; i < outputContainer.childCount; ++i)
         {
             outputContainer[0].AddManipulator(new EdgeConnector<Edge>(new AnimNodeConnectorListener()));
         }
@@ -78,7 +83,7 @@ public class AnimClipNode : BaseNode
                     {
                         _animClipName.text = animClip.name;
                         _animClip = animClip;
-                        
+                        _animClipPlayable = AnimationClipPlayable.Create(_playableGraph, _animClip);
                     }
                 }
             }
@@ -192,7 +197,7 @@ public class AnimNodeConnectorListener : IEdgeConnectorListener
                 var inputPort = enumerator.Current.input as Port;
                 if (inputPort != null)
                 {
-                    var playerNode = inputPort.node as PlayerNode;
+                    var playerNode = inputPort.node as PlayOutputNode;
                     if (playerNode != null)
                     {
                         playerNode.RefreshInputPorts();
@@ -204,7 +209,7 @@ public class AnimNodeConnectorListener : IEdgeConnectorListener
 
     public void OnDropOutsidePort(Edge edge, Vector2 position)
     {
-        
+
     }
 }
 

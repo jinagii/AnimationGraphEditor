@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using UnityEngine.Playables;
 using UnityEditor;
 
 public class AnimGraphView : GraphView
 {
-    public PlayerNode _root;
+    public PlayOutputNode _root;
+    public PlayableGraph _playableGraph;
 
     public AnimGraphView() : base()
     {
@@ -19,7 +21,12 @@ public class AnimGraphView : GraphView
 
         this.AddManipulator(new SelectionDragger()); // 선택옮기기
 
-        _root = new PlayerNode();
+        _playableGraph = PlayableGraph.Create("PG_Test");
+        _playableGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+        _root = new PlayOutputNode();
+        _root._playableGraph = _playableGraph;
+        _root.InitPlayables();
+
         AddElement(_root); // 시작할때 PlayNode 하나 추가
 
         var searchWindowProvider = ScriptableObject.CreateInstance<SearchWindowProvider>();

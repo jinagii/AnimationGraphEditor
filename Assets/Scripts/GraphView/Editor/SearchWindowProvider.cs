@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEditor.Experimental.GraphView;
 
 public class SearchWindowProvider : ScriptableObject, ISearchWindowProvider
@@ -22,7 +23,7 @@ public class SearchWindowProvider : ScriptableObject, ISearchWindowProvider
             foreach (var type in assembly.GetTypes())
             {
                 if (type.IsClass && !type.IsAbstract && (type.IsSubclassOf(typeof(TempBaseNode)))
-                    && type != typeof(PlayerNode) && type != typeof(BaseNode))
+                    && type != typeof(PlayOutputNode) && type != typeof(BaseNode))
                 {
                     entries.Add(new SearchTreeEntry(new GUIContent(type.Name)) { level = 1, userData = type });
                 }
@@ -36,6 +37,7 @@ public class SearchWindowProvider : ScriptableObject, ISearchWindowProvider
     {
         var type = searchTreeEntry.userData as System.Type;
         var node = Activator.CreateInstance(type) as TempBaseNode;
+        node._playableGraph = graphView._playableGraph; // PG 세팅
         graphView.AddElement(node);
         
         return true;

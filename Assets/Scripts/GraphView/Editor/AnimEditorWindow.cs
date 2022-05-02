@@ -11,8 +11,9 @@ public class AnimEditorWindow : EditorWindow
 
     [MenuItem("Window/Open AnimationGraphView")]
     public static void Open()
-    {
-        GetWindow<AnimEditorWindow>("AnimationGraphView");
+    {        
+        //GetWindow<AnimEditorWindow>("AnimationGraphView");
+        CreateWindow<AnimEditorWindow>("AnimationGraphView");        
     }
 
     public void CreateGUI()

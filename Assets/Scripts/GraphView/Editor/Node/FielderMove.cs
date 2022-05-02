@@ -7,14 +7,14 @@ public class FielderMoveNode : BaseNode
     {
         title = "FielderMove";
 
-        inputContainer.Clear();
+        inputContainer.Clear(); 
 
         for (int i = 0; i < outputContainer.childCount; ++i)
         {
             outputContainer[0].AddManipulator(new EdgeConnector<Edge>(new AnimNodeConnectorListener()));
         }
     }
-}
+} 
 
 public class SampleFielderMoveNodeSO : Node_SO
 {
