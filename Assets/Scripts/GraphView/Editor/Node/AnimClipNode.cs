@@ -14,7 +14,7 @@ public class AnimClipNode : BaseNode
 
     AnimationClip _animClip = null;
 
-    AnimationClipPlayable _animClipPlayable;
+    public AnimationClipPlayable _animClipPlayable;
 
     public AnimClipNode() : base()
     {
@@ -197,10 +197,10 @@ public class AnimNodeConnectorListener : IEdgeConnectorListener
                 var inputPort = enumerator.Current.input as Port;
                 if (inputPort != null)
                 {
-                    var playerNode = inputPort.node as PlayOutputNode;
-                    if (playerNode != null)
+                    var playOutputNode = inputPort.node as PlayOutputNode;
+                    if (playOutputNode != null)
                     {
-                        playerNode.RefreshInputPorts();
+                        playOutputNode.RefreshInputPorts();
                     }
                 }
             }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -6,11 +7,13 @@ using UnityEngine.Playables;
 using UnityEngine.Animations;
 using UnityEditor;
 
-
 public class PlayOutputNode : TempBaseNode
 {
     AnimationPlayableOutput _animPlayableOutput;
     AnimatorControllerPlayable _animControllerPlayable;
+    AnimationMixerPlayable _animMixerPlayable;
+    List<AnimationClipPlayable> _animClipPlayables = new List<AnimationClipPlayable>();
+
     Animator _animator;
     RuntimeAnimatorController _runtimeAnimator;
 
@@ -115,6 +118,25 @@ public class PlayOutputNode : TempBaseNode
         inputContainer.Add(inputPort);
     }
 
+    void InitMixerAnimationPlayable()
+    {
+        _animMixerPlayable =
+            AnimationMixerPlayable.Create(_playableGraph, inputContainer.childCount - 1);
+    }
+
+    void MixAnimationPlayable(List<AnimationClipPlayable> animClipPlayable)
+    {
+        foreach (AnimationClipPlayable anim in animClipPlayable)
+        {
+            _playableGraph.Connect(anim, 0, _animMixerPlayable, animClipPlayable.IndexOf(anim));
+        }
+    }
+
+    void ConnectAnimationPlayable()
+    {
+
+    }
+
     public void RefreshInputPorts()
     {
         bool finalPortIsEmpty = false;
@@ -129,6 +151,14 @@ public class PlayOutputNode : TempBaseNode
                 var enumerator = port.connections.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
+                    // animClipNode를 포트로부터 가져와 리스트에 등록
+                    var outputPort = enumerator.Current.output as Port;
+                    if (outputPort != null)
+                    {
+                        var animClipPlayable = outputPort.node as AnimClipNode;
+                        _animClipPlayables.Add(animClipPlayable._animClipPlayable);
+                    }
+
                     count++;
                 }
             }
@@ -146,6 +176,26 @@ public class PlayOutputNode : TempBaseNode
         // 마지막에 connect 없는 input 추가
         if (!finalPortIsEmpty)
             AddInputPort();
+
+        // test
+        //for (int i = inputContainer.childCount - 1; i >= 0; i--)
+        //{
+        //    Port port = inputContainer[i] as Port;
+        //    if (port != null)
+        //    {
+        //        var enumerator = port.connections.GetEnumerator();
+
+        //        var inputPort = enumerator.Current.input as Port;
+        //        if (inputPort != null)
+        //        {
+        //            var animClipPlayable = inputPort.node as AnimClipNode;
+        //            _animClipPlayables.Add(animClipPlayable._animClipPlayable);
+        //        }
+        //    }
+        //}
+
+
+
     }
 }
 
