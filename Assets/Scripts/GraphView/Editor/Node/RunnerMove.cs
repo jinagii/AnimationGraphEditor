@@ -16,7 +16,7 @@ public class RunnerMoveNode : BaseNode
     }
 }
 
-public class SampleRunnerMoveNodeSO : Node_SO
+public class RunnerMoveNode_SO : Node_SO
 {
     public int _outPort;
 }

@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AnimEditorWindow : EditorWindow
 {
@@ -56,7 +57,8 @@ public class AnimEditorWindow : EditorWindow
 
     void OnClickLoadButton(ClickEvent e)
     {
-        string path = EditorUtility.OpenFilePanel("Open", "Assets/Editor/Save", "asset"); 
+        //string path = EditorUtility.OpenFilePanel("Open", "Assets/Editor/Save", "asset"); 
+        string path = EditorUtility.OpenFilePanel("Open", "Assets/Resources", "asset"); 
         if (path.Length != 0)
         {
             path = path.Substring(path.IndexOf("/Assets/") + 1);
@@ -69,7 +71,8 @@ public class AnimEditorWindow : EditorWindow
                     var node = sampleGraphViewSO._sampleNodes[i];
                     if (node != null)
                     {
-                        node.Serialize(rootVisualElement);
+                        //node.Serialize(rootVisualElement);
+                        _graphView.AddElement(node.Serialize(rootVisualElement));
                     }
                 }
 
@@ -110,8 +113,19 @@ public class AnimEditorWindow : EditorWindow
         else
         {
             GraphView_SO sampleGraphViewSO = ScriptableObject.CreateInstance<GraphView_SO>();
+            AssetDatabase.CreateAsset(sampleGraphViewSO, _path);
+            AssetDatabase.SaveAssets();
 
-            var enumerator = _graphView._root.parent.Children().GetEnumerator();
+            var dataBase = Resources.Load<GraphView_SO>("NoTitle");
+            dataBase._sampleNodes = new Node_SO[_graphView._rootOutput._animClipNodes.Count];
+
+
+            //sampleGraphViewSO._animNodes = _graphView._rootOutput._animClipNodes;
+
+            AssetDatabase.Refresh(); // 저장 파일 위치한 곳 새로고침 
+
+
+            var enumerator = _graphView._rootOutput.parent.Children().GetEnumerator();
             while (enumerator.MoveNext())
             {
 
@@ -134,7 +148,7 @@ public class AnimEditorWindow : EditorWindow
 
             GraphView_SO sampleGraphViewSO = ScriptableObject.CreateInstance<GraphView_SO>();
 
-            var enumerator = _graphView._root.parent.contentContainer.Children().GetEnumerator();
+            var enumerator = _graphView._rootOutput.parent.contentContainer.Children().GetEnumerator();
             while (enumerator.MoveNext())
             {
                 Debug.Log($"{enumerator.Current.name}");

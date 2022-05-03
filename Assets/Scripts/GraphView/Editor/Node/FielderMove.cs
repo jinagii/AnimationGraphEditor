@@ -16,7 +16,7 @@ public class FielderMoveNode : BaseNode
     }
 } 
 
-public class SampleFielderMoveNodeSO : Node_SO
+public class FielderMoveNode_SO : Node_SO
 {
     public int _outPort;
 }

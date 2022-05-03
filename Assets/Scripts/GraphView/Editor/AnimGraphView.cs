@@ -8,7 +8,7 @@ using UnityEditor;
 
 public class AnimGraphView : GraphView
 {
-    public PlayOutputNode _root;
+    public PlayOutputNode _rootOutput;
     public PlayableGraph _playableGraph;
 
     public AnimGraphView() : base()
@@ -23,11 +23,11 @@ public class AnimGraphView : GraphView
 
         _playableGraph = PlayableGraph.Create("PG_Test");
         _playableGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
-        _root = new PlayOutputNode();
-        _root._playableGraph = _playableGraph;
-        _root.InitPlayables();
+        _rootOutput = new PlayOutputNode();
+        _rootOutput._playableGraph = _playableGraph;
+        _rootOutput.InitPlayables();
 
-        AddElement(_root); // 시작할때 PlayNode 하나 추가
+        AddElement(_rootOutput); // 시작할때 PlayNode 하나 추가
 
         var searchWindowProvider = ScriptableObject.CreateInstance<SearchWindowProvider>();
         searchWindowProvider.Initialize(this);

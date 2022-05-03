@@ -10,7 +10,7 @@ using System;
 public class AnimClipNode : BaseNode
 {
     public Label _animClipName = null;
-    VisualElement m_DropArea;
+    VisualElement _dropArea;
 
     public int _animClipIndex = 0;
     AnimationClip _animClip = null;
@@ -24,13 +24,13 @@ public class AnimClipNode : BaseNode
         _animClipName = new Label("no filename");
         contentContainer[0].Insert(1, _animClipName);
 
-        m_DropArea = titleContainer;
-        m_DropArea.AddToClassList("droparea");
-        m_DropArea.RegisterCallback<DragEnterEvent>(OnDragEnterEvent);
-        m_DropArea.RegisterCallback<DragLeaveEvent>(OnDragLeaveEvent);
-        m_DropArea.RegisterCallback<DragUpdatedEvent>(OnDragUpdatedEvent);
-        m_DropArea.RegisterCallback<DragPerformEvent>(OnDragPerformEvent);
-        m_DropArea.RegisterCallback<DragExitedEvent>(OnDragExitedEvent);
+        _dropArea = titleContainer;
+        _dropArea.AddToClassList("droparea");
+        _dropArea.RegisterCallback<DragEnterEvent>(OnDragEnterEvent);
+        _dropArea.RegisterCallback<DragLeaveEvent>(OnDragLeaveEvent);
+        _dropArea.RegisterCallback<DragUpdatedEvent>(OnDragUpdatedEvent);
+        _dropArea.RegisterCallback<DragPerformEvent>(OnDragPerformEvent);
+        _dropArea.RegisterCallback<DragExitedEvent>(OnDragExitedEvent);
 
 
         inputContainer.Clear();
@@ -42,17 +42,17 @@ public class AnimClipNode : BaseNode
 
         void OnDragEnterEvent(DragEnterEvent e)
         {
-            m_DropArea.AddToClassList("dragover");
+            _dropArea.AddToClassList("dragover");
         }
 
         void OnDragLeaveEvent(DragLeaveEvent e)
         {
-            m_DropArea.RemoveFromClassList("dragover");
+            _dropArea.RemoveFromClassList("dragover");
         }
 
         void OnDragUpdatedEvent(DragUpdatedEvent e)
         {
-            m_DropArea.AddToClassList("dragover");
+            _dropArea.AddToClassList("dragover");
 
             object draggedLabel = DragAndDrop.GetGenericData(DraggableLabel.s_DragDataType);
             if (draggedLabel != null)
@@ -93,7 +93,7 @@ public class AnimClipNode : BaseNode
         void OnDragExitedEvent(DragExitedEvent e)
         {
             object draggedLabel = DragAndDrop.GetGenericData(DraggableLabel.s_DragDataType);
-            m_DropArea.RemoveFromClassList("dragover");
+            _dropArea.RemoveFromClassList("dragover");
         }
     }
 }
@@ -219,8 +219,22 @@ public class AnimClipNode_SO : Node_SO
     public string _animClipName;
     public int _outPort;
 
-    public override void Serialize(VisualElement root)
-    {
+    // 여기서 뭘해야하는것일까
+    public override TempBaseNode Serialize(VisualElement root)
+    {       
+        for (int i = 0; i < root.contentContainer.childCount; i++)
+        {
+            AnimClipNode temp = root.contentContainer[i] as AnimClipNode;
+            
+            if (temp != null)
+            {
+                TempBaseNode newNode = Activator.CreateInstance<AnimClipNode>() as TempBaseNode;
 
+                newNode = temp; 
+                return newNode;
+            }
+        }
+
+        return null;
     }
 }

@@ -12,7 +12,7 @@ public class PlayOutputNode : TempBaseNode
     AnimationPlayableOutput _animPlayableOutput;
     AnimatorControllerPlayable _animControllerPlayable;
     AnimationMixerPlayable _animMixerPlayable;
-    List<AnimClipNode> _animClipNodes = new List<AnimClipNode>();
+    public List<AnimClipNode> _animClipNodes = new List<AnimClipNode>();
     List<AnimationClipPlayable> _animClipPlayables = new List<AnimationClipPlayable>();
 
     Animator _animator;
@@ -121,7 +121,7 @@ public class PlayOutputNode : TempBaseNode
 
     public void ReCollectInputNodes()
     {
-        // 리프레시하고 다시 정렬하기
+        // 커넥션 달라지면 리프레시하고 다시 정렬하기
         _animClipNodes.Clear();
 
         //for (int i = inputContainer.childCount - 1; i >= 0; i--)

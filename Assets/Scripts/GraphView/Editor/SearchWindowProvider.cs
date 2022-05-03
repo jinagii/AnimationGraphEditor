@@ -6,11 +6,11 @@ using UnityEditor.Experimental.GraphView;
 
 public class SearchWindowProvider : ScriptableObject, ISearchWindowProvider
 {
-    private AnimGraphView graphView;
+    private AnimGraphView _graphView;
 
     public void Initialize(AnimGraphView graphView)
     {
-        this.graphView = graphView;        
+        this._graphView = graphView;        
     }
 
     List<SearchTreeEntry> ISearchWindowProvider.CreateSearchTree(SearchWindowContext context)
@@ -37,8 +37,8 @@ public class SearchWindowProvider : ScriptableObject, ISearchWindowProvider
     {
         var type = searchTreeEntry.userData as System.Type;
         var node = Activator.CreateInstance(type) as TempBaseNode;
-        node._playableGraph = graphView._playableGraph; // PG 세팅
-        graphView.AddElement(node);
+        node._playableGraph = _graphView._playableGraph; // PG 세팅
+        _graphView.AddElement(node);
         
         return true;
     }

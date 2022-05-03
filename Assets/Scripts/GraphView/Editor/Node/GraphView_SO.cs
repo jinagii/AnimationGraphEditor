@@ -5,5 +5,7 @@ using UnityEngine;
 public class GraphView_SO : ScriptableObject
 {
     public Node_SO[] _sampleNodes;
+    public List<AnimClipNode> _animNodes;
+
 
 }
