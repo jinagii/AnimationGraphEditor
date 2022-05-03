@@ -12,6 +12,7 @@ public class PlayOutputNode : TempBaseNode
     AnimationPlayableOutput _animPlayableOutput;
     AnimatorControllerPlayable _animControllerPlayable;
     AnimationMixerPlayable _animMixerPlayable;
+    List<AnimClipNode> _animClipNodes = new List<AnimClipNode>();
     List<AnimationClipPlayable> _animClipPlayables = new List<AnimationClipPlayable>();
 
     Animator _animator;
@@ -28,76 +29,6 @@ public class PlayOutputNode : TempBaseNode
         capabilities -= Capabilities.Deletable;
 
         AddInputPort();
-
-        // drag and drop
-        //_outputName = new Label("no animator");
-        //contentContainer[0].Insert(1, _outputName);
-
-        //_dropArea = titleContainer;
-        //_dropArea.AddToClassList("droparea");
-        //_dropArea.RegisterCallback<DragEnterEvent>(OnDragEnterEvent);
-        //_dropArea.RegisterCallback<DragLeaveEvent>(OnDragLeaveEvent);
-        //_dropArea.RegisterCallback<DragUpdatedEvent>(OnDragUpdatedEvent);
-        //_dropArea.RegisterCallback<DragPerformEvent>(OnDragPerformEvent);
-        //_dropArea.RegisterCallback<DragExitedEvent>(OnDragExitedEvent);
-
-
-        //outputContainer.Clear();
-
-        //void OnDragEnterEvent(DragEnterEvent e)
-        //{
-        //    _dropArea.AddToClassList("dragover");
-        //}
-
-        //void OnDragLeaveEvent(DragLeaveEvent e)
-        //{
-        //    _dropArea.RemoveFromClassList("dragover");
-        //}
-
-        //void OnDragUpdatedEvent(DragUpdatedEvent e)
-        //{
-        //    _dropArea.AddToClassList("dragover");
-
-        //    object draggedLabel = DragAndDrop.GetGenericData(DraggableLabel.s_DragDataType);
-        //    if (draggedLabel != null)
-        //    {
-        //        DragAndDrop.visualMode = DragAndDropVisualMode.Move;
-        //    }
-        //    else
-        //    {
-        //        DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-        //    }
-        //}
-
-        //void OnDragPerformEvent(DragPerformEvent e)
-        //{
-        //    DragAndDrop.AcceptDrag();
-
-        //    object draggedObject = DragAndDrop.GetGenericData(DraggableLabel.s_DragDataType);
-        //    if (draggedObject != null && draggedObject is DraggableLabel)
-        //    {
-        //        var label = (DraggableLabel)draggedObject;
-        //        label.StopDraggingBox(e.localMousePosition);
-        //    }
-        //    else
-        //    {
-        //        foreach (var obj in DragAndDrop.objectReferences)
-        //        {
-        //            var animator = obj as Animator;
-        //            if (animator != null)
-        //            {
-        //                _outputName.text = animator.name;
-        //                _animator = animator;
-        //            }
-        //        }
-        //    }
-        //}
-
-        //void OnDragExitedEvent(DragExitedEvent e)
-        //{
-        //    object draggedLabel = DragAndDrop.GetGenericData(DraggableLabel.s_DragDataType);
-        //    _dropArea.RemoveFromClassList("dragover");
-        //}
     }
 
 
@@ -114,8 +45,13 @@ public class PlayOutputNode : TempBaseNode
     {
         var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(Port));
         inputPort.portName = "In";
-        inputPort.AddManipulator(new EdgeConnector<Edge>(new MyPlayerNodeConnectorListener()));
+        inputPort.AddManipulator(new EdgeConnector<Edge>(new PlayOutputNodeConnectorListenerㅒ()));
         inputContainer.Add(inputPort);
+    }
+
+    void RemoveInputPort(int index)
+    {
+
     }
 
     void InitMixerAnimationPlayable()
@@ -137,6 +73,14 @@ public class PlayOutputNode : TempBaseNode
 
     }
 
+    public void SetOutputTarget(Animator animator)
+    {
+        if (_animPlayableOutput.GetTarget() != animator)
+        {
+            _animPlayableOutput.SetTarget(animator);
+        }
+    }
+
     public void RefreshInputPorts()
     {
         bool finalPortIsEmpty = false;
@@ -151,14 +95,6 @@ public class PlayOutputNode : TempBaseNode
                 var enumerator = port.connections.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
-                    // animClipNode를 포트로부터 가져와 리스트에 등록
-                    var outputPort = enumerator.Current.output as Port;
-                    if (outputPort != null)
-                    {
-                        var animClipPlayable = outputPort.node as AnimClipNode;
-                        _animClipPlayables.Add(animClipPlayable._animClipPlayable);
-                    }
-
                     count++;
                 }
             }
@@ -173,33 +109,49 @@ public class PlayOutputNode : TempBaseNode
             }
         }
 
+        // AnimNode들 다시 정렬
+        ReCollectInputNodes();
+
         // 마지막에 connect 없는 input 추가
         if (!finalPortIsEmpty)
+        {
             AddInputPort();
-
-        // test
-        //for (int i = inputContainer.childCount - 1; i >= 0; i--)
-        //{
-        //    Port port = inputContainer[i] as Port;
-        //    if (port != null)
-        //    {
-        //        var enumerator = port.connections.GetEnumerator();
-
-        //        var inputPort = enumerator.Current.input as Port;
-        //        if (inputPort != null)
-        //        {
-        //            var animClipPlayable = inputPort.node as AnimClipNode;
-        //            _animClipPlayables.Add(animClipPlayable._animClipPlayable);
-        //        }
-        //    }
-        //}
-
-
-
+        }
     }
+
+    public void ReCollectInputNodes()
+    {
+        // 리프레시하고 다시 정렬하기
+        _animClipNodes.Clear();
+
+        //for (int i = inputContainer.childCount - 1; i >= 0; i--)
+        int nodeCount = 0;
+        for (int i = 0; i < inputContainer.childCount; i++)
+        {
+            Port port = inputContainer[i] as Port;
+            if (port != null)
+            {
+                var enumerator = port.connections.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    // animClipNode를 포트로부터 가져와 리스트에 등록
+                    var outputPort = enumerator.Current.output as Port;
+                    if (outputPort.node != null)
+                    {
+                        var animClipPlayable = outputPort.node as AnimClipNode;
+                        animClipPlayable._animClipIndex = nodeCount;
+                        _animClipNodes.Add(animClipPlayable);                        
+                    }
+
+                    nodeCount++;
+                }
+            }
+        }
+    }
+
 }
 
-public class MyPlayerNodeConnectorListener : IEdgeConnectorListener
+public class PlayOutputNodeConnectorListenerㅒ : IEdgeConnectorListener
 {
     public void OnDrop(GraphView graphView, Edge edge)
     {
@@ -207,6 +159,7 @@ public class MyPlayerNodeConnectorListener : IEdgeConnectorListener
         if (playerNode != null)
         {
             playerNode.RefreshInputPorts();
+
         }
     }
 
@@ -240,7 +193,7 @@ public class MyPlayerNodeConnectorListener : IEdgeConnectorListener
     }
 }
 
-public class PlayerNode_SO : Node_SO
+public class PlayOutputNode_SO : Node_SO
 {
     // in
     public int[] _inputPorts;

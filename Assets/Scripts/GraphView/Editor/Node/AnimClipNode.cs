@@ -12,6 +12,7 @@ public class AnimClipNode : BaseNode
     public Label _animClipName = null;
     VisualElement m_DropArea;
 
+    public int _animClipIndex = 0;
     AnimationClip _animClip = null;
 
     public AnimationClipPlayable _animClipPlayable;
